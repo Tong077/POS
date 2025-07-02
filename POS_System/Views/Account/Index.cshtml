@@ -1,9 +1,11 @@
-﻿@model IEnumerable<POS_System.Models.DTO.UserViewModel>
-
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<POS_System.Models.DTO.UserViewModel>
 @{
     ViewData["Title"] = "User List";
 
 }
+
 
 <div class="card">
     <div class="card-body">
@@ -11,7 +13,13 @@
             <h4>User List</h4>
         </div>
         <p>
-            <a asp-action="Register" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+            @{
+                var result = await AuthorizationService.AuthorizeAsync(User, "Create");
+                if(result.Succeeded)
+                {
+                    <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                }
+            }
         </p>
         <table class="table table-striped">
             <thead>

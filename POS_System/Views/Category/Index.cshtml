@@ -1,22 +1,36 @@
-﻿@model IEnumerable<POS_System.Models.Category>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<POS_System.Models.Category>
 @{
     ViewData["Title"] = "Category";
+}
+@{
+    var edit = await AuthorizationService.AuthorizeAsync(User, "Update");
+
+    var delete = await AuthorizationService.AuthorizeAsync(User, "Delete");
+
 }
 <div class="card">
     <div class="card-body">
         <div class="card-title">
             <h4>Category</h4>
         </div>
-       <p>
-            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
-       </p>
+        <p>
+            @{
+                var result = await AuthorizationService.AuthorizeAsync(User, "Create");
+                if (result.Succeeded)
+                {
+                    <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                }
+            }
+        </p>
         <div class="table-responsive">
 
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>
-                           #
+                            #
                         </th>
                         <th>
                             Category Name
@@ -42,11 +56,18 @@
                                 @Html.DisplayFor(modelItem => cate.Description)
                             </td>
                             <td>
-                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Category" asp-action="Edit" asp-route-CategoryId="@cate.CategoryId"><i class="fa-solid fa-pen-nib"></i></a>
-                                <a asp-controller="Category" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-CategoryId="@cate.CategoryId"><i class="fa-solid fa-trash"></i></a>
+                                @if (edit.Succeeded)
+                                {
+                                    <a class="mr-2 btn btn-sm btn-primary" asp-controller="Category" asp-action="Edit" asp-route-CategoryId="@cate.CategoryId"><i class="fa-solid fa-pen-nib"></i></a>
+                                }
+                                @if (delete.Succeeded)
+                                {
+                                    <a asp-controller="Category" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-CategoryId="@cate.CategoryId"><i class="fa-solid fa-trash"></i></a>
+                                }
+
                             </td>
-                            
-                           
+
+
                         </tr>
                     }
                 </tbody>

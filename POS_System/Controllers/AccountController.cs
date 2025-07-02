@@ -229,7 +229,7 @@ namespace POS_System.Controllers
                 user.DisplayUsername = model.DisplayUsername;
                 user.Email = model.Email;
 
-                // Handle Image Upload
+               
                 if (model.Image != null && model.Image.Length > 0)
                 {
                     var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
@@ -324,7 +324,7 @@ namespace POS_System.Controllers
                 }
             }
 
-            // If we reach here, something failed
+         
             ViewBag.Roles = new SelectList(
                 await _context.ApplicationRoles.Where(r => r.IsActive).ToListAsync(),
                 "RoleName",
@@ -365,7 +365,6 @@ namespace POS_System.Controllers
 
 
         [HttpPost]
-        
         public async Task<IActionResult> UpdateProFile(EditUserDTO model)
         {
             if (ModelState.IsValid)
@@ -516,7 +515,7 @@ namespace POS_System.Controllers
                 return NotFound();
             }
 
-            // Delete the user's image if it exists
+           
             if (!string.IsNullOrEmpty(user.ImagePath))
             {
                 var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ImagePath.TrimStart('/'));
@@ -559,52 +558,7 @@ namespace POS_System.Controllers
         }
 
 
-        //[HttpPost]
-        //public async Task<IActionResult> Login(LoginDTO model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return View(model);
-        //    }
-
-        //    var user = await _userManager.FindByEmailAsync(model.Email);
-        //    if (user == null)
-        //    {
-        //        TempData["toastr-type"] = "error";
-        //        TempData["toastr-message"] = "Invalid email or password.";
-        //        return View(model);
-        //    }
-
-
-        //    var passwordValid = await _userManager.CheckPasswordAsync(user, model.Password);
-        //    if (!passwordValid)
-        //    {
-        //        TempData["toastr-type"] = "error";
-        //        TempData["toastr-message"] = "Invalid email or password.";
-        //        return View(model);
-        //    }
-
-
-        //    var hasActiveRole = await (from ur in _context.UserRoles
-        //                               join r in _context.ApplicationRoles on ur.RoleId.ToString() equals r.Id.ToString()
-        //                               where ur.UserId == user.Id && r.IsActive
-        //                               select r).AnyAsync();
-
-
-        //    await _signInManager.SignInAsync(user, isPersistent: false);
-
-        //    TempData["toastr-type"] = "success";
-        //    TempData["toastr-message"] = "Login successful...!";
-        //    _accessor.HttpContext.Session.SetString("UserName", user.UserName ?? user.UserName);
-        //    _accessor.HttpContext.Session.SetString("Image", string.IsNullOrEmpty(user.ImagePath) ? "wwwroot/images/users" : user.ImagePath);
-
-
-
-        //    TempData["toastr-type"] = "success";
-        //    TempData["toastr-message"] = "Login successful...!";
-        //    return RedirectToLocal(model.ReturnUrl);
-
-        //}
+        
         [HttpPost]
         public async Task<IActionResult> Login(LoginDTO model)
         {
@@ -631,19 +585,18 @@ namespace POS_System.Controllers
 
             var permissionService = _accessor.HttpContext.RequestServices.GetRequiredService<IApplyPermissionRepository>();
             var permissions = await permissionService.GetUserPermissionsAsync(user.Id);
-            System.Diagnostics.Debug.WriteLine($"Permissions retrieved for user {user.Id}: {string.Join(", ", permissions)}");
+           
 
             var claims = new List<Claim> {
                     new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Name, user.UserName)
                 };
             claims.AddRange(permissions.Select(p => new Claim("Permission", p)));
-            System.Diagnostics.Debug.WriteLine($"Claims created: {string.Join(", ", claims.Select(c => $"{c.Type}: {c.Value}"))}");
-
+           
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
             await _signInManager.SignInAsync(user, new AuthenticationProperties { IsPersistent = false });
-            System.Diagnostics.Debug.WriteLine($"Claims after SignInAsync: {string.Join(", ", principal.Claims.Select(c => $"{c.Type}: {c.Value}"))}");
+            
 
             _accessor.HttpContext.Session.SetString("UserName", user.UserName ?? user.UserName);
             _accessor.HttpContext.Session.SetString("Image", string.IsNullOrEmpty(user.ImagePath) ? "wwwroot/images/users" : user.ImagePath);

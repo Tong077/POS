@@ -1,15 +1,29 @@
-﻿@model X.PagedList.IPagedList<POS_System.Models.Customer>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model X.PagedList.IPagedList<POS_System.Models.Customer>
 @using X.PagedList.Mvc.Core
 @using X.PagedList
 @{
     ViewData["Title"] = "Customer";
+}
+@{
+    var edit = await AuthorizationService.AuthorizeAsync(User, "Update");
+
+    var delete = await AuthorizationService.AuthorizeAsync(User, "Delete");
+
 }
 <div style="min-height: 90vh;">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Customer Information</h4>
             <p>
-                <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                @{
+                    var result = await AuthorizationService.AuthorizeAsync(User, "Create");
+                    if (result.Succeeded)
+                    {
+                        <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                    }
+                }
             </p>
             <div class="table-responsive">
 
@@ -34,8 +48,14 @@
                                 <td>@item.Phone</td>
                                 <td>@item.Address</td>
                                 <td>
-                                    <a class="mr-2 btn btn-sm btn-primary" asp-controller="Customer" asp-action="Edit" asp-route-CustomerId="@item.CustomerId"><i class="fa-solid fa-pen-nib"></i></a>
-                                    <a asp-controller="Customer" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-CustomerId="@item.CustomerId"><i class="fa-solid fa-trash"></i></a>
+                                    @if (edit.Succeeded)
+                                    {
+                                        <a class="mr-2 btn btn-sm btn-primary" asp-controller="Customer" asp-action="Edit" asp-route-CustomerId="@item.CustomerId"><i class="fa-solid fa-pen-nib"></i></a>
+                                    }
+                                    @if (delete.Succeeded)
+                                    {
+                                        <a asp-controller="Customer" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-CustomerId="@item.CustomerId"><i class="fa-solid fa-trash"></i></a>
+                                    }
                                 </td>
                             </tr>
                         }

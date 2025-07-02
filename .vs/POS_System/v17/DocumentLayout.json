@@ -5,22 +5,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|d:\\asp_net\\pos_system\\pos_system\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|solutionrelative:pos_system\\views\\shared\\_sidebar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|d:\\asp_net\\pos_system\\pos_system\\services\\userclaimshelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|solutionrelative:pos_system\\services\\userclaimshelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|d:\\asp_net\\pos_system\\pos_system\\services\\permissionauthorizationhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|solutionrelative:pos_system\\services\\permissionauthorizationhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|d:\\asp_net\\pos_system\\pos_system\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|solutionrelative:pos_system\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|d:\\asp_net\\pos_system\\pos_system\\service\\applypermissionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7F340C9F-084F-4A28-8EC3-7DC3063CB3B4}|POS_System\\POS_System.csproj|solutionrelative:pos_system\\service\\applypermissionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,32 +14,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 13,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UserClaimsHelper.cs",
-              "DocumentMoniker": "D:\\Asp_net\\POS_System\\POS_System\\Services\\UserClaimsHelper.cs",
-              "RelativeDocumentMoniker": "POS_System\\Services\\UserClaimsHelper.cs",
-              "ToolTip": "D:\\Asp_net\\POS_System\\POS_System\\Services\\UserClaimsHelper.cs",
-              "RelativeToolTip": "POS_System\\Services\\UserClaimsHelper.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T06:14:07.266Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ApplyPermissionService.cs",
-              "DocumentMoniker": "D:\\Asp_net\\POS_System\\POS_System\\Service\\ApplyPermissionService.cs",
-              "RelativeDocumentMoniker": "POS_System\\Service\\ApplyPermissionService.cs",
-              "ToolTip": "D:\\Asp_net\\POS_System\\POS_System\\Service\\ApplyPermissionService.cs",
-              "RelativeToolTip": "POS_System\\Service\\ApplyPermissionService.cs",
-              "ViewState": "AgIAAHkAAAAAAAAAAAAwwIcAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T06:07:25.262Z",
+              "DocumentIndex": 0,
+              "Title": "_Sidebar.cshtml",
+              "DocumentMoniker": "D:\\Asp_net\\POS_System\\POS_System\\Views\\Shared\\_Sidebar.cshtml",
+              "RelativeDocumentMoniker": "POS_System\\Views\\Shared\\_Sidebar.cshtml",
+              "ToolTip": "D:\\Asp_net\\POS_System\\POS_System\\Views\\Shared\\_Sidebar.cshtml",
+              "RelativeToolTip": "POS_System\\Views\\Shared\\_Sidebar.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-02T06:47:28.391Z",
               "EditorCaption": ""
             },
             {
@@ -93,45 +64,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "PermissionAuthorizationHandler.cs",
-              "DocumentMoniker": "D:\\Asp_net\\POS_System\\POS_System\\Services\\PermissionAuthorizationHandler.cs",
-              "RelativeDocumentMoniker": "POS_System\\Services\\PermissionAuthorizationHandler.cs",
-              "ToolTip": "D:\\Asp_net\\POS_System\\POS_System\\Services\\PermissionAuthorizationHandler.cs",
-              "RelativeToolTip": "POS_System\\Services\\PermissionAuthorizationHandler.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAQwCEAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-01T13:17:22.553Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AccountController.cs",
-              "DocumentMoniker": "D:\\Asp_net\\POS_System\\POS_System\\Controllers\\AccountController.cs",
-              "RelativeDocumentMoniker": "POS_System\\Controllers\\AccountController.cs",
-              "ToolTip": "D:\\Asp_net\\POS_System\\POS_System\\Controllers\\AccountController.cs",
-              "RelativeToolTip": "POS_System\\Controllers\\AccountController.cs",
-              "ViewState": "AgIAAGoCAAAAAAAAAAAswIACAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-01T12:28:57.562Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "_Sidebar.cshtml",
-              "DocumentMoniker": "D:\\Asp_net\\POS_System\\POS_System\\Views\\Shared\\_Sidebar.cshtml",
-              "RelativeDocumentMoniker": "POS_System\\Views\\Shared\\_Sidebar.cshtml",
-              "ToolTip": "D:\\Asp_net\\POS_System\\POS_System\\Views\\Shared\\_Sidebar.cshtml",
-              "RelativeToolTip": "POS_System\\Views\\Shared\\_Sidebar.cshtml",
-              "ViewState": "AgIAACcAAAAAAAAAAAAswEQAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-01T12:03:24.141Z",
-              "EditorCaption": ""
             }
           ]
         }

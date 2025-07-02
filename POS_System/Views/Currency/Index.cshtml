@@ -1,8 +1,16 @@
-﻿@model IEnumerable<POS_System.Models.Currency>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<POS_System.Models.Currency>
 @using POS_System.Helpers
 @using POS_System.Services
 @{
     ViewBag.Title = "Currency";
+}
+@{
+    var edit = await AuthorizationService.AuthorizeAsync(User, "Update");
+
+   
+
 }
 <div class="card">
     <div class="card-body">
@@ -11,9 +19,12 @@
 
         </div>
         <p>
-            @if (User.HasPermission("Create"))
-            {
-                <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+            @{
+                var result = await AuthorizationService.AuthorizeAsync(User, "Create");
+                if (result.Succeeded)
+                {
+                    <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                }
             }
         </p>
         <div class="table-responsive">
@@ -30,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var currency in Model)
+                    @foreach (var currency in Model)
                     {
                         <tr>
                             <td>@Html.DisplayFor(items => currency.CurrencyId)</td>
@@ -39,13 +50,17 @@
                             <td>@Html.DisplayFor(items => currency.ExchangeRate)</td>
                             <td>@Html.DisplayFor(items => currency.EffectiveDate)</td>
                             <td>
-                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Currency" asp-action="Edit" asp-route-CurrencyId="@currency.CurrencyId"><i class="fa-solid fa-pen-nib"></i></a>
+                                @if (edit.Succeeded)
+                                {
+                                    <a class="mr-2 btn btn-sm btn-primary" asp-controller="Currency" asp-action="Edit" asp-route-CurrencyId="@currency.CurrencyId"><i class="fa-solid fa-pen-nib"></i></a>
+                                }
                             </td>
                         </tr>
                     }
                 </tbody>
-                </table>
-        </<div>
-
+            </table>
+            </<div>
+            </div>
+        </div>
     </div>
 </div>

@@ -138,7 +138,6 @@ namespace POS_System.Service
                     p => p.PermissionId,
                     (rp, p) => new { rp.UserID, p.Name })
                 .AnyAsync(x => x.UserID == userId && x.Name == permission);
-            System.Diagnostics.Debug.WriteLine($"HasPermissionAsync: User {userId}, Permission {permission}, Result: {result}");
             return result;
         }
 

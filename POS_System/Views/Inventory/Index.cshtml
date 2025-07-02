@@ -1,9 +1,16 @@
-﻿@model IEnumerable<POS_System.Models.Inventory>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<POS_System.Models.Inventory>
 
 @{
     ViewData["Title"] = "Inventory";
 }
+@{
+    var edit = await AuthorizationService.AuthorizeAsync(User, "Update");
 
+   
+
+}
 <div class="card">
     <div class="card-body">
         <h4 class="card-title">Inventory Information</h4>
@@ -19,7 +26,13 @@
         }
 
         <p>
-            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+            @{
+                var result = await AuthorizationService.AuthorizeAsync(User, "Create");
+                if (result.Succeeded)
+                {
+                    <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                }
+            }
         </p>
 
         <table class="table table-bordered">
@@ -45,7 +58,10 @@
                         <td>@item.CostPrice</td>
                         <td>@item.TotalCost</td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.InventoryId" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-nib"></i></a>
+                            @if (edit.Succeeded)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.InventoryId" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-nib"></i></a>
+                            }
                         </td>
                     </tr>
                 }

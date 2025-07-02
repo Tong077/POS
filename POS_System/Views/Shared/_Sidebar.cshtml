@@ -8,80 +8,87 @@
         <ul class="metismenu" id="menu">
             <li class="nav-label">Order Item</li>
             <hr class="my-2">
-            <li>
-                <a asp-controller="Home" asp-action="Index" aria-expanded="false">
-                    <i class="fa-solid fa-gauge"></i><span class="nav-text">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Pos" asp-action="Index" aria-expanded="false">
-                    <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Sale</span>
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Pos" asp-action="pos" aria-expanded="false">
-                    <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Point of Sale</span>
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Customer" asp-action="Index" aria-expanded="false">
-                    <i class="fa-solid fa-users"></i><span class="nav-text">Customer</span>
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Category" asp-action="Index" aria-expanded="false">
-                    <i class="fa-solid fa-list"></i><span class="nav-text">Category</span>
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Product" asp-action="Index" aria-expanded="false">
-                    <i class="fa-solid fa-tags"></i><span class="nav-text">Product</span>
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Inventory" asp-action="Index" aria-expanded="false">
-                    <i class="fa-solid fa-warehouse"></i><span class="nav-text">Inventory</span>
-                </a>
-            </li>
-            <li>
-                <a asp-controller="Supllier" asp-action="Index" aria-expanded="false">
-                    <i class="fa-solid fa-boxes-packing"></i><span class="nav-text">Supplier</span>
-                </a>
-            </li>
             @{
                 var authResult = await AuthorizationService.AuthorizeAsync(User, "View");
                 if (authResult.Succeeded)
                 {
                     <li>
+                        <a asp-controller="Home" asp-action="Index" aria-expanded="false">
+                            <i class="fa-solid fa-gauge"></i><span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Pos" asp-action="Index" aria-expanded="false">
+                            <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Sale</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Pos" asp-action="pos" aria-expanded="false">
+                            <i class="fa-solid fa-cart-shopping"></i><span class="nav-text">Point of Sale</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Customer" asp-action="Index" aria-expanded="false">
+                            <i class="fa-solid fa-users"></i><span class="nav-text">Customer</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Category" asp-action="Index" aria-expanded="false">
+                            <i class="fa-solid fa-list"></i><span class="nav-text">Category</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Product" asp-action="Index" aria-expanded="false">
+                            <i class="fa-solid fa-tags"></i><span class="nav-text">Product</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Inventory" asp-action="Index" aria-expanded="false">
+                            <i class="fa-solid fa-warehouse"></i><span class="nav-text">Inventory</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-controller="Supllier" asp-action="Index" aria-expanded="false">
+                            <i class="fa-solid fa-boxes-packing"></i><span class="nav-text">Supplier</span>
+                        </a>
+                    </li>
+                    <li>
                         <a asp-controller="Currency" asp-action="Index" aria-expanded="false">
                             <i class="fa-solid fa-wallet"></i><span class="nav-text">Currency</span>
                         </a>
                     </li>
+
+
+
+
+
                 }
             }
-            
-
             <hr class="my-2">
-            <li>
-                <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
-                    <i class="fa-solid fa-gear"></i><span class="nav-text">User Management</span>
-                </a>
-                <ul aria-expanded="false">
-                    <li><a asp-controller="Account" asp-action="Index">USER</a></li>
-                    <li><a asp-controller="Roles" asp-action="Index">Roles</a></li>
-                    <li><a asp-controller="Permission" asp-action="Index">Permission</a></li>
-                    <li><a asp-controller="ApplyPermission" asp-action="Index">Apply Permission</a></li>
-                    
-                </ul>
-            </li>
-            <li>
-                <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
-                    <i class="fa-solid fa-gear"></i><span class="nav-text">Setting</span>
-                </a>
-                <ul aria-expanded="false">
-                    <li><a asp-controller="Account" asp-action="Index">Business Setting</a></li>
-                </ul>
-            </li>
+            @if (User.IsInRole("Admin"))
+            {
+                <li>
+                    <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
+                        <i class="fa-solid fa-gear"></i><span class="nav-text">User Management</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a asp-controller="Account" asp-action="Index">USER</a></li>
+                        <li><a asp-controller="Roles" asp-action="Index">Roles</a></li>
+                        <li><a asp-controller="Permission" asp-action="Index">Permission</a></li>
+                        <li><a asp-controller="ApplyPermission" asp-action="Index">Apply Permission</a></li>
+
+                    </ul>
+                </li>
+                <li>
+                    <a class="has-arrow" href="javascript:void(0)" aria-expanded="false">
+                        <i class="fa-solid fa-gear"></i><span class="nav-text">Setting</span>
+                    </a>
+                    <ul aria-expanded="false">
+                        <li><a asp-controller="Account" asp-action="Index">Business Setting</a></li>
+                    </ul>
+                </li>
+            }
+
         </ul>
     </div>
 </div>

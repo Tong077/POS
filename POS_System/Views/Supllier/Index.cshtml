@@ -1,12 +1,26 @@
-﻿@model IEnumerable<POS_System.Models.Supplier>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<POS_System.Models.Supplier>
 @{
     ViewData["Title"] = "Supplier";
+}
+@{
+    var edit = await AuthorizationService.AuthorizeAsync(User, "Update");
+
+    var delete = await AuthorizationService.AuthorizeAsync(User, "Delete");
+
 }
 <div class="card">
     <div class="card-body">
         <h4 class="card-title">Supplier Information</h4>
         <p>
-            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+            @{
+                var result = await AuthorizationService.AuthorizeAsync(User, "Create");
+                if (result.Succeeded)
+                {
+                    <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                }
+            }
         </p>
         <div class="table-responsive">
             <table class="table table-bordered">
@@ -30,8 +44,17 @@
                             <td>@Html.DisplayFor(items => item.Phone)</td>
                             <td>@Html.DisplayFor(items => item.Address)</td>
                             <td>
-                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Supllier" asp-action="Edit" asp-route-SupplierId="@item.SupplierId"><i class="fa-solid fa-pen-nib"></i></a>
-                                <a asp-controller="Supllier" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-SupplierId="@item.SupplierId"><i class="fa-solid fa-trash"></i></a>
+
+                                @if (edit.Succeeded)
+                                {
+                                    <a class="mr-2 btn btn-sm btn-primary" asp-controller="Supllier" asp-action="Edit" asp-route-SupplierId="@item.SupplierId"><i class="fa-solid fa-pen-nib"></i></a>
+
+                                }
+                                @if (delete.Succeeded)
+                                {
+
+                                    <a asp-controller="Supllier" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-SupplierId="@item.SupplierId"><i class="fa-solid fa-trash"></i></a>
+                                }
                             </td>
                         </tr>
                     }

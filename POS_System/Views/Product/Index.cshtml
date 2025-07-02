@@ -1,6 +1,14 @@
-﻿@model IEnumerable<POS_System.Models.Product>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@model IEnumerable<POS_System.Models.Product>
 @{
     ViewData["Title"] = "Product";
+}
+@{
+    var edit = await AuthorizationService.AuthorizeAsync(User, "Update");
+
+    var delete = await AuthorizationService.AuthorizeAsync(User, "Delete");
+
 }
 <div class="card">
     <div class="card-body">
@@ -8,7 +16,13 @@
             <h4>Product </h4>
         </div>
         <p>
-            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+            @{
+                var result = await AuthorizationService.AuthorizeAsync(User, "Create");
+                if (result.Succeeded)
+                {
+                    <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+                }
+            }
         </p>
         <div class="table-responsive">
 
@@ -41,8 +55,14 @@
                             <td> @Html.DisplayFor(modelItem => pro.Description)</td>
                             <td class="text-center"><img src="~/images/@pro.Image" class="img-fluid img-thumbnail" style="max-width: 50px; max-height: 70px;" /></td>
                             <td>
-                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Product" asp-action="Edit" asp-route-productId="@pro.ProductId"><i class="fa-solid fa-pen-nib"></i></a>
-                                <a asp-controller="Product" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-productId="@pro.ProductId"><i class="fa-solid fa-trash"></i></a>
+                                @if (edit.Succeeded)
+                                {
+                                    <a class="mr-2 btn btn-sm btn-primary" asp-controller="Product" asp-action="Edit" asp-route-productId="@pro.ProductId"><i class="fa-solid fa-pen-nib"></i></a>
+                                }
+                                @if (delete.Succeeded)
+                                {
+                                    <a asp-controller="Product" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-productId="@pro.ProductId"><i class="fa-solid fa-trash"></i></a>
+                                }
                             </td>
 
 
