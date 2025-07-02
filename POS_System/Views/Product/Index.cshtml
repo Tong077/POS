@@ -1,0 +1,56 @@
+﻿@model IEnumerable<POS_System.Models.Product>
+@{
+    ViewData["Title"] = "Product";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="card-title">
+            <h4>Product </h4>
+        </div>
+        <p>
+            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+        </p>
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ProductName</th>
+                        <th>Pric</th>
+                        <th>Currency</th>
+                        <th>Category Name </th>
+                        <th>Supplier Name</th>
+                        <th>StockQuantity</th>
+                        <th>Description </th>
+                        <th>Image</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pro in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => pro.ProductId) </td>
+                            <td>@Html.DisplayFor(modelItem => pro.ProductName)</td>
+                            <td>@Html.DisplayFor(modelItem => pro.Price) </td>
+                            <td>@Html.DisplayFor(modelItem => pro.Currency)</td>
+                            <td> @Html.DisplayFor(modelItem => pro.Category!.CategoryName) </td>
+                            <td>@Html.DisplayFor(modelItem => pro.Supplier!.SupplierName)</td>
+                            <td>@Html.DisplayFor(modelItem => pro.StockQuantity) </td>
+                            <td> @Html.DisplayFor(modelItem => pro.Description)</td>
+                            <td class="text-center"><img src="~/images/@pro.Image" class="img-fluid img-thumbnail" style="max-width: 50px; max-height: 70px;" /></td>
+                            <td>
+                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Product" asp-action="Edit" asp-route-productId="@pro.ProductId"><i class="fa-solid fa-pen-nib"></i></a>
+                                <a asp-controller="Product" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-productId="@pro.ProductId"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

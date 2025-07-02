@@ -1,0 +1,42 @@
+﻿@model IEnumerable<POS_System.Models.Supplier>
+@{
+    ViewData["Title"] = "Supplier";
+}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Supplier Information</h4>
+        <p>
+            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+        </p>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Supplier Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(items => item.SupplierId)</td>
+                            <td>@Html.DisplayFor(items => item.SupplierName)</td>
+                            <td>@Html.DisplayFor(items => item.Email)</td>
+                            <td>@Html.DisplayFor(items => item.Phone)</td>
+                            <td>@Html.DisplayFor(items => item.Address)</td>
+                            <td>
+                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Supllier" asp-action="Edit" asp-route-SupplierId="@item.SupplierId"><i class="fa-solid fa-pen-nib"></i></a>
+                                <a asp-controller="Supllier" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-SupplierId="@item.SupplierId"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

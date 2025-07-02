@@ -1,0 +1,165 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>POS </title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon.png">
+    <partial name="_csslink" />
+</head>
+<body>
+
+
+    <div id="main-wrapper">
+        <div class="nav-header">
+            <a href="index.html" class="brand-logo">
+                <img class="logo-abbr" src="./images/logo.png" alt="">
+                <img class="logo-compact" src="./images/logo-text.png" alt="">
+                <img class="brand-title" src="./images/logo-text.png" alt="">
+            </a>
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+
+
+        <partial name="_Nave" />
+        <partial name="_Sidebar" />
+
+
+        <div class="content-body">
+            <div class="container-fluid mt-3">
+                @RenderBody()
+
+            </div>
+        </div>
+    </div>
+    @RenderSection("Scripts", required: false)
+
+
+
+    <partial name="_script" />
+    <script>
+            toastr.options = {
+            "closeButton": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "1000"
+        };
+
+        @if (TempData["toastr-type"] != null && TempData["toastr-message"] != null)
+        {
+                            <text>
+                                console.log("Toastr triggered: @TempData["toastr-type"] - @TempData["toastr-message"]");
+                                toastr["@TempData["toastr-type"]"]("@TempData["toastr-message"]");
+                            </text>
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputs = document.querySelectorAll("input.form-control");
+            console.log("Inputs found:", inputs.length);
+            inputs.forEach(input => {
+                console.log("Processing input:", input);
+                input.addEventListener("input", function () {
+                    const container = this.closest(".form-group");
+                    const labelStar = container?.querySelector(".required-star");
+                    console.log("Container:", container, "LabelStar:", labelStar);
+                    if (labelStar) {
+                        labelStar.style.display = this.value.trim() ? "none" : "inline";
+                    }
+                });
+                input.dispatchEvent(new Event("input"));
+            });
+        });
+    </script>
+    <script>
+                $(document).ready(function () {
+            // Log to verify jQuery and DOM elements
+            console.log("jQuery loaded:", typeof $);
+            console.log("notificationList exists:", $('#notificationList').length);
+            console.log("notificationCount exists:", $('#notificationCount').length);
+
+            // Initial load
+            loadLowStockNotifications();
+
+            // Optional: Poll every 60 seconds (uncomment to enable)
+            // setInterval(loadLowStockNotifications, 60000);
+
+            function loadLowStockNotifications() {
+                $.ajax({
+                    url: '@Url.Action("GetLowStockNotifications", "Inventory")',
+                    type: 'GET',
+                    cache: false, // Prevent caching
+                    success: function (data) {
+                        console.log("Data received:", JSON.stringify(data, null, 2)); // Pretty-print JSON for clarity
+                        const notificationList = $('#notificationList');
+                        const notificationCount = $('#notificationCount');
+                        notificationList.empty();
+
+                        if (data && Array.isArray(data) && data.length > 0) {
+                            notificationCount.text(data.length);
+                            data.forEach(item => {
+                                // Normalize property names (handle case variations)
+                                const productName = item.ProductName || item.productName || item.Name || 'Unknown Product';
+                                const stockQuantity = item.StockQuantity || item.stockQuantity || item.Quantity || 'N/A';
+
+                                console.log("Processing item:", { productName, stockQuantity }); // Log each item
+
+                                notificationList.append(`
+                                    <li>
+                                        <a href="javascript:void(0)">
+                                            <span class="mr-3 avatar-icon bg-danger-lighten-2">
+                                                <i class="icon-present"></i>
+                                            </span>
+                                            <div class="notification-content">
+                                                <h6 class="notification-heading">${productName} Low Stock</h6>
+                                                <span class="notification-text">Stock: ${stockQuantity}</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                `);
+                            });
+                        } else {
+                            notificationCount.text('');
+                            notificationList.append(`
+                                <li>
+                                    <a href="javascript:void(0)">
+                                        <div class="notification-content">
+                                            <h6 class="notification-heading">No Low Stock Items</h6>
+                                            <span class="notification-text">All items are sufficiently stocked.</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            `);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching notifications:", {
+                            status: status,
+                            error: error,
+                            responseText: xhr.responseText
+                        });
+                        const notificationList = $('#notificationList');
+                        notificationList.empty().append(`
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <div class="notification-content">
+                                        <h6 class="notification-heading">Error Loading Notifications</h6>
+                                        <span class="notification-text">Failed to fetch data: ${error}. Please try again later.</span>
+                                    </div>
+                                </a>
+                            </li>
+                        `);
+                        $('#notificationCount').text('');
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

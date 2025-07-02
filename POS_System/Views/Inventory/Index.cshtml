@@ -1,0 +1,55 @@
+﻿@model IEnumerable<POS_System.Models.Inventory>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Inventory Information</h4>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        }
+
+        <p>
+            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+        </p>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>StockQuantity</th>
+                    <th>Currencies Type</th>
+                    <th>CostPrice</th>
+                    <th>TotalCost</th>
+                   <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.InventoryId</td>
+                        <td>@item.Product!.ProductName</td>
+                        <td>@item.StockQuantity</td>
+                        <td>@item.Currency</td>
+                        <td>@item.CostPrice</td>
+                        <td>@item.TotalCost</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.InventoryId" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-nib"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

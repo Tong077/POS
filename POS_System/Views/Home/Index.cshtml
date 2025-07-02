@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Dashborad";
+}
+<section>
+    <div class="row">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card gradient-1">
+                <div class="card-body">
+                    <h3 class="card-title text-white">Products Sold</h3>
+                    <div class="d-inline-block">
+                        <h2 class="text-white">@ViewBag.TotalProductsSold</h2>
+                        <p class="text-white mb-0">@ViewBag.MonthYear</p>
+                    </div>
+                    <span class="float-right display-5 opacity-5">
+                        <i class="fa fa-shopping-cart"></i>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+        <!-- Profit in USD Card -->
+        <div class="col-lg-3 col-sm-6">
+            <div class="card gradient-2">
+                <div class="card-body">
+                    <h3 class="card-title text-white">Profit (USD)</h3>
+                    <div class="d-inline-block">
+                        <h2 class="text-white">@ViewBag.ProfitUSD.ToString("N2") USD</h2>
+                        <p class="text-white mb-0">@ViewBag.MonthYear</p>
+                    </div>
+                    <span class="float-right display-5 opacity-5">
+                        <i class="fa fa-money"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profit in KHR Card -->
+        <div class="col-lg-3 col-sm-6">
+            <div class="card gradient-2">
+                <div class="card-body">
+                    <h3 class="card-title text-white">Profit (KHR)</h3>
+                    <div class="d-inline-block">
+                        <h2 class="text-white">@ViewBag.ProfitKHR.ToString("N0") KHR</h2>
+                        <p class="text-white mb-0">@ViewBag.MonthYear</p>
+                    </div>
+                    <span class="float-right display-5 opacity-5">
+                        <i class="fa fa-money"></i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card gradient-3">
+                <div class="card-body">
+                    <h3 class="card-title text-white">All Customers</h3>
+                    <div class="d-inline-block">
+                        <h2 class="text-white">@ViewData["CustomerCount"] </h2>
+                        <p class="text-white mb-0">@ViewBag.MonthYear</p>
+                    </div>
+                    <span class="float-right display-5 opacity-5"><i class="fa fa-users"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <partial name="GetChart" />
+</section>
+
+
+  
+

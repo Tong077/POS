@@ -1,0 +1,144 @@
+﻿@model POS_System.Models.Inventory
+
+@{
+    ViewData["Title"] = "Edit Inventory";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Edit Inventory</h4>
+        <div class="basic-form">
+            <form asp-action="Update" asp-controller="Inventory" method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <input type="hidden" asp-for="ProductId" />
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="ProductId">Product</label>
+                        <select asp-for="ProductId" asp-items="@ViewBag.Products" class="form-control" disabled onchange="populateStockQuantity()">
+                            <option value="">Please select a product</option>
+                        </select>
+                        <span asp-validation-for="ProductId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label asp-for="StockQuantity">Stock Quantity</label>
+                        <input type="number" step="0.01" min="0" class="form-control" asp-for="StockQuantity" placeholder="Stock Quantity" oninput="updateCostPriceDisplay()" />
+                        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                        <small id="currentStock" class="form-text text-muted"></small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label asp-for="Currency">Currency</label>
+                        <select asp-for="Currency" asp-items="@ViewBag.Currencies" class="form-control" onchange="updateCostPriceDisplay()" required>
+                        </select>
+
+                        <span asp-validation-for="Currency" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label asp-for="CostPrice">Cost Price</label>
+                        <input type="number" step="0.01" min="0" class="form-control" asp-for="CostPrice" placeholder="Cost Price" oninput="updateCostPriceDisplay()" />
+                        <span asp-validation-for="CostPrice" class="text-danger"></span>
+                        <small id="currentCostPrice" class="form-text text-muted"></small>
+                        <small id="convertedCostPrice" class="form-text text-muted"></small>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success mr-2">Save Change </button>
+                    <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    let exchangeRates = {}; // Dynamic exchange rates
+    let currentInventory = null;
+
+    // Fetch all exchange rates dynamically
+    async function loadExchangeRates() {
+        try {
+            const response = await fetch('/Inventory/GetAllExchangeRates');
+            exchangeRates = await response.json();
+            console.log('Loaded exchange rates:', exchangeRates);
+            updateCostPriceDisplay();
+        } catch (error) {
+            console.error('Error fetching exchange rates:', error);
+            exchangeRates = { "USD-KHR": 4100, "KHR-USD": 0.000244 }; // Fallback
+        }
+    }
+
+    function populateStockQuantity() {
+        const productId = document.getElementById('ProductId').value;
+        const currentStockElement = document.getElementById('currentStock');
+        const currentCostPriceElement = document.getElementById('currentCostPrice');
+        const currencySelect = document.getElementById('Currency');
+
+        if (productId) {
+            fetch(`/Inventory/GetInventoryDetails?productId=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    currentInventory = data;
+                    if (data.exists) {
+                        currentStockElement.textContent = `Current Stock: ${data.stockQuantity}`;
+                        currentCostPriceElement.textContent = `Current Cost Price: ${data.costPrice} ${data.currency}, Total Cost: ${data.totalCost} ${data.currency}`;
+                        currencySelect.value = data.currency; // Auto-assign existing currency
+                    } else {
+                        currentStockElement.textContent = 'No existing inventory.';
+                        currentCostPriceElement.textContent = '';
+                    }
+                    updateCostPriceDisplay();
+                })
+                .catch(error => {
+                    console.error('Error fetching inventory details:', error);
+                    currentStockElement.textContent = 'Error fetching stock.';
+                    currentCostPriceElement.textContent = '';
+                });
+        }
+    }
+
+    function updateCostPriceDisplay() {
+        const currency = document.getElementById('Currency').value;
+        const costPriceInput = document.getElementById('CostPrice');
+        const stockQuantityInput = document.getElementById('StockQuantity');
+        const costPrice = parseFloat(costPriceInput.value) || 0;
+        const quantity = parseFloat(stockQuantityInput.value) || 0;
+        const convertedCostPriceElement = document.getElementById('convertedCostPrice');
+
+        if (!currency || costPrice === 0 || quantity === 0) {
+            convertedCostPriceElement.textContent = '';
+            return;
+        }
+
+        const totalNewCost = costPrice * quantity;
+        let convertedTotalNewCost = totalNewCost;
+        let convertedCostPrice = costPrice;
+
+        if (currentInventory && currentInventory.exists) {
+            const existingCurrency = currentInventory.currency;
+            if (currency !== existingCurrency) {
+                const rateKey = `${currency}-${existingCurrency}`;
+                const exchangeRate = exchangeRates[rateKey];
+                if (exchangeRate) {
+                    convertedCostPrice = costPrice * exchangeRate;
+                    convertedTotalNewCost = totalNewCost * exchangeRate;
+                } else {
+                    console.warn(`No exchange rate found for ${rateKey}`);
+                }
+            }
+            convertedCostPriceElement.textContent = `Will be stored as: ${convertedCostPrice.toFixed(2)} ${existingCurrency} (Total New Cost: ${convertedTotalNewCost.toFixed(2)} ${existingCurrency})`;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadExchangeRates();
+        populateStockQuantity();
+    });
+</script>

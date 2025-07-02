@@ -1,0 +1,47 @@
+﻿@model POS_System.Models.Inventory
+
+@{
+    ViewData["Title"] = "Inventory Details";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Inventory Details</h4>
+        <div class="basic-form">
+            <dl class="row">
+                <dt class="col-sm-3">Product</dt>
+                <dd class="col-sm-9">@ViewBag.ProductName</dd>
+
+                <dt class="col-sm-3">Stock Quantity</dt>
+                <dd class="col-sm-9">@Model.StockQuantity</dd>
+
+                <dt class="col-sm-3">Cost Price</dt>
+                <dd class="col-sm-9">@Model.CostPrice?.ToString("F2") @Model.Currency</dd>
+
+                <dt class="col-sm-3">Total Cost</dt>
+                <dd class="col-sm-9">@Model.TotalCost?.ToString("F2") @Model.Currency</dd>
+
+                <dt class="col-sm-3">Currency</dt>
+                <dd class="col-sm-9">@Model.Currency</dd>
+
+                <dt class="col-sm-3">Last Updated</dt>
+                <dd class="col-sm-9">@Model.LastUpdated.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+            </dl>
+
+            <div class="form-group mt-3 d-flex justify-content-end">
+                <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-sm btn-success mr-2">Edit</a>
+                <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    dt {
+        font-weight: bold;
+    }
+
+    dd {
+        margin-bottom: 1rem;
+    }
+</style>

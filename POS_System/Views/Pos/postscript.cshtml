@@ -1,0 +1,163 @@
+﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let orderItems = [];
+    const exchangeRate = @ViewBag.ExchangeRate; // Use the dynamic exchange rate from ViewBag
+
+    function addToOrder(productId, productName, price, productCurrency = 'USD') {
+        const existingItem = orderItems.find(item => item.productId === productId);
+        const selectedCurrency = document.getElementById('currencySelect').value;
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+            existingItem.totalAmount = existingItem.quantity * existingItem.price;
+        } else {
+            orderItems.push({
+                productId: productId,
+                productName: productName,
+                price: price,
+                quantity: 1,
+                totalAmount: price,
+                productCurrency: productCurrency
+            });
+        }
+
+        updateOrderList(selectedCurrency);
+    }
+
+    function increaseQuantity(productId) {
+        const item = orderItems.find(item => item.productId === productId);
+        if (item) {
+            item.quantity += 1;
+            item.totalAmount = item.quantity * item.price;
+            const currency = document.getElementById('currencySelect').value;
+            updateOrderList(currency);
+        }
+    }
+
+    function decreaseQuantity(productId) {
+        const item = orderItems.find(item => item.productId === productId);
+        if (item && item.quantity > 1) {
+            item.quantity -= 1;
+            item.totalAmount = item.quantity * item.price;
+        } else if (item && item.quantity === 1) {
+            orderItems = orderItems.filter(i => i.productId !== productId);
+        }
+        const currency = document.getElementById('currencySelect').value;
+        updateOrderList(currency);
+    }
+
+    function updateOrderList(currency) {
+        const orderList = document.getElementById('order-list');
+        orderList.innerHTML = '';
+
+        let totalAmount = 0;
+        orderItems.forEach(item => {
+            let displayPrice = item.price;
+            let displayTotal = item.totalAmount;
+
+            if (item.productCurrency !== currency) {
+                if (item.productCurrency === 'KHR' && currency === 'USD') {
+                    displayPrice = item.price / exchangeRate;
+                    displayTotal = item.totalAmount / exchangeRate;
+                } else if (item.productCurrency === 'USD' && currency === 'KHR') {
+                    displayPrice = item.price * exchangeRate;
+                    displayTotal = item.totalAmount * exchangeRate;
+                }
+            }
+
+            totalAmount += displayTotal;
+
+            orderList.innerHTML += `
+                <div class="order-item">
+                    <div class="order-item-details">
+                        <span class="product-name">${item.productName}</span>
+                        <span class="product-total">${currency === 'USD' ? '$' : '៛'}${displayTotal.toFixed(2)}</span>
+                    </div>
+                    <div class="order-item-buttons">
+                        <button class="quantity-btn" onclick="increaseQuantity(${item.productId})">+</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" onclick="decreaseQuantity(${item.productId})">-</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById('total-amount').innerText = `${currency === 'USD' ? '$' : '៛'}${totalAmount.toFixed(2)}`;
+    }
+
+    function updateCurrencyDisplay() {
+        const currency = document.getElementById('currencySelect').value;
+        updateOrderList(currency);
+    }
+
+    function prepareOrderData() {
+        const currency = document.getElementById('currencySelect').value;
+        const saleDetails = orderItems.map(item => {
+            let price = item.price;
+            let totalAmount = item.totalAmount;
+
+            if (item.productCurrency !== currency) {
+                if (item.productCurrency === 'KHR' && currency === 'USD') {
+                    price = item.price / exchangeRate;
+                    totalAmount = item.totalAmount / exchangeRate;
+                } else if (item.productCurrency === 'USD' && currency === 'KHR') {
+                    price = item.price * exchangeRate;
+                    totalAmount = item.totalAmount * exchangeRate;
+                }
+            }
+
+            return {
+                productID: item.productId,
+                quantity: item.quantity,
+                price: price,
+                totalAmount: totalAmount
+            };
+        });
+
+        document.getElementById('orderDetails').value = JSON.stringify(saleDetails);
+        document.getElementById('saleForm').submit();
+    }
+
+    function filterProducts() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const productItems = document.querySelectorAll('.product-item');
+
+        productItems.forEach(item => {
+            const productName = item.querySelector('h5').textContent.toLowerCase();
+            if (productName.includes(searchTerm)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    function filterByCategory(category) {
+        const productItems = document.querySelectorAll('.product-item');
+
+        productItems.forEach(item => {
+            const itemCategory = item.getAttribute('data-category');
+            if (category === 'All' || itemCategory === category) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        const categoryLinks = document.querySelectorAll('.nav-link');
+        categoryLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.textContent === category) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+
+
+
+
+   
+
+</script>
+

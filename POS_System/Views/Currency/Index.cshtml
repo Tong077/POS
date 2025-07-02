@@ -1,0 +1,51 @@
+﻿@model IEnumerable<POS_System.Models.Currency>
+@using POS_System.Helpers
+@using POS_System.Services
+@{
+    ViewBag.Title = "Currency";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="card-title">
+            <h4>Currency</h4>
+
+        </div>
+        <p>
+            @if (User.HasPermission("Create"))
+            {
+                <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+            }
+        </p>
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>FromCurrency</th>
+                        <th>ToCurrency</th>
+                        <th>ExchangeRate</th>
+                        <th>EffectiveDate</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var currency in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(items => currency.CurrencyId)</td>
+                            <td>@Html.DisplayFor(items => currency.FromCurrency)</td>
+                            <td>@Html.DisplayFor(items => currency.ToCurrency)</td>
+                            <td>@Html.DisplayFor(items => currency.ExchangeRate)</td>
+                            <td>@Html.DisplayFor(items => currency.EffectiveDate)</td>
+                            <td>
+                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Currency" asp-action="Edit" asp-route-CurrencyId="@currency.CurrencyId"><i class="fa-solid fa-pen-nib"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                </table>
+        </<div>
+
+    </div>
+</div>

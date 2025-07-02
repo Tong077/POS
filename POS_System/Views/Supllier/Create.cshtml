@@ -1,0 +1,105 @@
+﻿@model List<POS_System.Models.Supplier>
+@{
+    ViewData["Title"] = "Add Supplier";
+}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Add Supplier</h4>
+        <div class="basic-form">
+            <form asp-action="Store" asp-controller="Supllier" method="post" id="supplierForm">
+                <div class="form-group d-flex align-items-center">
+                    <input type="number" id="rowCountInput" class="form-control w-25 mr-2" min="1" placeholder="Enter number of rows">
+                    <button type="button" id="addRowBtn" class="btn btn-info">Add Rows</button>
+                </div>
+                <div id="supplierContainer">
+                    @if (Model?.Count > 0)
+                    {
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <div class="border-bottom mb-3 pb-3 supplier-row" data-index="@i">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                       
+                                        <input type="text" class="form-control supplier-name" name="Suppliers[@i].SupplierName" value="@Model[i].SupplierName" placeholder="Supplier Name" required>
+                                        <span asp-validation-for="@Model[i].SupplierName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <input type="email" class="form-control" name="Suppliers[@i].Email" value="@Model[i].Email" placeholder="Email">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <input type="text" class="form-control" name="Suppliers[@i].Phone" value="@Model[i].Phone" placeholder="Phone">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <input type="text" class="form-control" name="Suppliers[@i].Address" value="@Model[i].Address" placeholder="Address">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <div class="form-group mt-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success mr-2">Save</button>
+                    <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let rowIndex = @Model?.Count ?? 0;
+
+    function addRows(count) {
+        for (let i = 0; i < count; i++) {
+            const newRow = `
+                <div class="border-bottom mb-3 pb-3 supplier-row" data-index="${rowIndex}">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control supplier-name" name="Suppliers[${rowIndex}].SupplierName" placeholder="Supplier Name" required>
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="email" class="form-control" name="Suppliers[${rowIndex}].Email" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" name="Suppliers[${rowIndex}].Phone" placeholder="Phone">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" name="Suppliers[${rowIndex}].Address" placeholder="Address">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                </div>
+            `;
+            $("#supplierContainer").append(newRow);
+            rowIndex++;
+        }
+    }
+
+    // Add new rows based on input number
+    $("#addRowBtn").click(function () {
+        let rowCount = parseInt($("#rowCountInput").val());
+        if (isNaN(rowCount) || rowCount <= 0) {
+            alert("Please enter a valid number of rows.");
+            return;
+        }
+        addRows(rowCount);
+    });
+
+    // Remove row dynamically
+    $(document).on("click", ".remove-row", function () {
+        $(this).closest(".supplier-row").remove();
+    });
+
+    // Ensure at least one row is present
+    if ($(".supplier-row").length === 0) {
+        addRows(1);
+    }
+</script>

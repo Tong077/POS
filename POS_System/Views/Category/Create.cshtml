@@ -1,0 +1,87 @@
+﻿@model List<POS_System.Models.Category>
+@{
+    ViewData["Title"] = "Category";
+}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Add Category</h4>
+        <div class="basic-form">
+            <form asp-action="Store" asp-controller="Category" method="post" id="categoryForm">
+                <div class="form-group d-flex align-items-center">
+                    <input type="number" id="rowCountInput" class="form-control w-25 mr-2" min="1" placeholder="Enter number of rows">
+                    <button type="button" id="addRowBtn" class="btn btn-info">Add Rows</button>
+                </div>
+                <div id="categoryContainer">
+                    @if (Model?.Count > 0)
+                    {
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <div class="border-bottom mb-3 pb-3 category-row" data-index="@i">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <input type="text" class="form-control" name="Categories[@i].CategoryName" value="@Model[i].CategoryName" placeholder="Category Name" required>
+                                        <span asp-validation-for="@Model[i].CategoryName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <input type="text" class="form-control" name="Categories[@i].Description" value="@Model[i].Description" placeholder="Description">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="form-group mt-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success mr-2">Save</button>
+                    <a asp-action="Index" class="btn  btn-sm btn-danger">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    let rowIndex = @Model?.Count ?? 0;
+
+    function addRows(count) {
+        for (let i = 0; i < count; i++) {
+            const newRow = `
+                <div class="border-bottom mb-3 pb-3 category-row" data-index="${rowIndex}">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" name="Categories[${rowIndex}].CategoryName" placeholder="Category Name" required>
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" name="Categories[${rowIndex}].Description" placeholder="Description">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">Remove</button>
+                </div>
+            `;
+            $("#categoryContainer").append(newRow);
+            rowIndex++;
+        }
+    }
+
+    // Add new rows based on input number
+    $("#addRowBtn").click(function () {
+        let rowCount = parseInt($("#rowCountInput").val());
+        if (isNaN(rowCount) || rowCount <= 0) {
+            alert("Please enter a valid number of rows.");
+            return;
+        }
+        addRows(rowCount);
+    });
+
+    // Remove row dynamically
+    $(document).on("click", ".remove-row", function () {
+        $(this).closest(".category-row").remove();
+    });
+
+    // Ensure at least one row is present
+    if ($(".category-row").length === 0) {
+        addRows(1);
+    }
+</script>

@@ -1,0 +1,43 @@
+﻿@model POS_System.Models.ApplicationRole
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Add Role</h4>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+
+        <form asp-action="Store" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RoleName">Role Name <span class="required-star" style="color:red">*</span></label>
+
+                <input asp-for="RoleName" class="form-control" required />
+                <span asp-validation-for="RoleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description">Description <span class="required-star" style="color:red">*</span></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group ml-4">
+                <input asp-for="IsActive" type="checkbox" class="form-check-input mr-3" />
+                <label asp-for="IsActive">Is Active</label>
+               
+                <span asp-validation-for="IsActive" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3 d-flex justify-content-end">
+                <button type="submit" class="btn btn-sm btn-success mr-2">
+                    Add New
+                </button>
+                <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

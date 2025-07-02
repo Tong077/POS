@@ -1,0 +1,42 @@
+﻿@model IEnumerable<POS_System.Models.ApplicationRole>
+@{
+    ViewData["Title"] = "Roles";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="card-title">
+            <h4>Roles</h4>
+        </div>
+        <p>
+            <a asp-action="Create" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i></a>
+        </p>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                       
+                        <th>RoleName</th>
+                        <th>Description</th>
+                        <th>IsActive</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                           
+                            <td>@Html.DisplayFor(role => item.RoleName)</td>
+                            <td>@Html.DisplayFor(role => item.Description)</td>
+                            <td>@Html.DisplayFor(role => item.IsActive)</td>
+                            <td>
+                                <a class="mr-2 btn btn-sm btn-primary" asp-controller="Roles" asp-action="Edit" asp-route-id="@item.Id"><i class="fa-solid fa-pen-nib"></i></a>
+                                <a asp-controller="Roles" class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

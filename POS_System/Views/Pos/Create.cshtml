@@ -1,0 +1,140 @@
+﻿@using POS_System.Helpers
+@model POS_System.Models.DTO.SaleDTO
+
+<partial name="Style" />
+<style>
+    #order-list .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+    }
+
+    .order-item-details, .order-item-buttons {
+        display: inline-flex;
+    }
+
+    .quantity-btn {
+        margin: 0 5px;
+    }
+</style>
+
+<form asp-controller="Pos" asp-action="pos" method="post" id="saleForm">
+    <div class="row">
+        <div class="col-md-9">
+            <!-- Search and Category Section -->
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search all products here..." onkeyup="filterProducts()">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button" onclick="filterProducts()">Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories & Customer Selection -->
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4 category-scroll">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item"><a class="nav-link active" href="#" onclick="filterByCategory('All')">All</a></li>
+                        @if (ViewBag.Categories != null)
+                        {
+                            @foreach (var category in ViewBag.Categories)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" onclick="filterByCategory('@category.CategoryName')">
+                                        @category.CategoryName
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                    <select id="customerSelect" asp-for="CustomerID" asp-items="@ViewBag.Customers" class="form-control">
+                        <option value="0">Select The Customer</option>
+                    </select>
+                    <span asp-validation-for="CustomerID" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-2">
+                    <select id="currencySelect" asp-for="Currency" class="form-control" onchange="updateCurrencyDisplay()">
+                        <option value="USD" selected>USD</option>
+                        <option value="KHR">KHR</option>
+                    </select>
+                    <span asp-validation-for="Currency" class="text-danger"></span>
+                </div>
+
+                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addCustomerModal">
+                    Add New Customer
+                </button>
+
+
+            </div>
+
+            <!-- Exchange Rate Info -->
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <small id="exchangeRateInfo" class="text-muted">
+                        Current Rate (KHR to USD): @ViewBag.ExchangeRate
+                        @if (ViewBag.FutureExchangeRate != null)
+                        {
+                            <span>| New Rate (@ViewBag.FutureExchangeRate) effective @(((DateTime)ViewBag.FutureEffectiveDate).ToString("M/d/yyyy h:mm:ss tt"))</span>
+                        }
+                    </small>
+                </div>
+            </div>
+
+            <!-- Product List -->
+            <div class="product-grid-scroll" id="productGrid">
+                <div class="row">
+                    @if (ViewBag.Products is List<POS_System.Models.Product> products)
+                    {
+                        foreach (var item in products)
+                        {
+                            <div class="col-md-3 col-sm-6 product-item" data-category="@item.Category!.CategoryName">
+                                <div class="product-card" onclick="addToOrder(@item.ProductId, '@Html.Raw(JavaScriptHelper.JavaScriptStringEncode(item.ProductName))', @(item.Price!.Value.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)), '@item.Currency')">
+                                    <img src="@Url.Content("~/images/" + item.Image)" alt="@item.ProductName" class="product-image">
+                                    <h5>@item.ProductName</h5>
+                                    <p class="price">@(item.Currency == "USD" ? "$" : item.Currency == "KHR" ? "៛" : "$") @item.Price</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>No products found.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-md-3">
+            <div class="order-details">
+                <h4 class="d-flex justify-content-between align-items-center">
+                    Order Detail
+                    <button class="btn btn-light btn-sm"><i class="bi bi-gear"></i></button>
+                </h4>
+                <div id="order-list"> </div>
+            </div>
+            <div class="mt-3">
+                <div class="mb-2 d-flex justify-content-between">
+                    <strong>Total Amount:</strong>
+                    <span id="total-amount"> $0.00</span>
+                </div>
+                <hr>
+                <input type="hidden" id="orderDetails" name="SaleDetailsJson">
+                <div class="form-group mt-3 d-flex justify-content-center">
+                    <button type="button" class="btn btn-sm btn-success w-50" onclick="prepareOrderData()">Pay Now</button>
+                    <a asp-action="Index" class="btn btn-sm btn-danger ml-2 w-50">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<partial name="AddCustomerModal" model="new POS_System.Models.Customer()" />
+<partial name="postscript" />

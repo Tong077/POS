@@ -1,0 +1,140 @@
+﻿<section>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body pb-0 d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-1">Product Sales</h4>
+                                <p class="m-0">Total Sold: @ViewBag.TotalProductsSold in @ViewBag.MonthYear</p>
+                            </div>
+                            <div>
+                                <select id="monthYearFilter" class="form-control" style="width: 200px;">
+                                    @for (int y = DateTime.Now.Year - 2; y <= DateTime.Now.Year; y++)
+                                    {
+                                        for (int m = 1; m <= 12; m++)
+                                        {
+                                            bool isSelected = (m == DateTime.Now.Month && y == DateTime.Now.Year);
+                                            <option value="@($"{m}-{y}")" selected="@(isSelected ? "selected" : null)">
+                                                @(new DateTime(y, m, 1).ToString("MMMM yyyy"))
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper ml-3" style="width: 1120px; height: 350px;">
+                            <canvas id="chart_widget_2"></canvas>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div class="ml-2 w-100 mr-2">
+                                    <h6>Total Products Sold: @ViewBag.TotalProductsSold</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById('chart_widget_2');
+        const noDataMessage = document.createElement('div');
+        noDataMessage.id = 'noDataMessage';
+        noDataMessage.style = 'display: none; text-align: center; color: red;';
+        noDataMessage.textContent = 'No data available for this period.';
+        ctx.parentNode.insertBefore(noDataMessage, ctx.nextSibling);
+        let chart;
+
+        function fetchChartData(month, year) {
+            fetch(`/Home/GetChartData?month=${month}&year=${year}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (chart) {
+                        chart.destroy();
+                    }
+                    if (!data.labels || !data.datasets || data.labels.length === 0) {
+                        ctx.style.display = 'none';
+                        noDataMessage.style.display = 'block';
+                        console.log('No data or invalid data:', data);
+                    } else {
+                        ctx.style.display = 'block';
+                        noDataMessage.style.display = 'none';
+                        chart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: data.labels,
+                                datasets: data.datasets
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: { display: true, text: 'Products Sold' }
+                                    },
+                                    x: {
+                                        title: { display: true, text: 'Day of Month' }
+                                    }
+                                }
+                            }
+                        });
+                        console.log('Chart data loaded:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching chart data:', error);
+                    if (chart) chart.destroy();
+                    ctx.style.display = 'none';
+                    noDataMessage.style.display = 'block';
+                });
+        }
+
+        // Initial load with current month and year (June 2025)
+        const currentDate = new Date();
+        console.log('Initial load for month:', currentDate.getMonth() + 1, 'year:', currentDate.getFullYear());
+        fetchChartData(currentDate.getMonth() + 1, currentDate.getFullYear());
+
+        // Handle filter change
+        const monthYearFilter = document.getElementById('monthYearFilter');
+        if (monthYearFilter) {
+            monthYearFilter.addEventListener('change', function () {
+                const [month, year] = this.value.split('-');
+                if (month && year) {
+                    console.log('Filter changed to month:', month, 'year:', year);
+                    fetchChartData(month, year);
+                    fetch(`/Home/GetTotalProductsSold?month=${month}&year=${year}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                            return response.json();
+                        })
+                        .then(data => {
+                            const p = document.querySelector('.card-body p');
+                            const h6 = document.querySelector('.card-body h6');
+                            if (p && h6) {
+                                p.textContent = `Total Sold: ${data.total} in ${new Date(year, month - 1).toLocaleString('default', { month: 'long', year: 'numeric' })}`;
+                                h6.textContent = `Total Products Sold: ${data.total}`;
+                            } else {
+                                console.error('Card-body elements not found');
+                            }
+                        })
+                        .catch(error => console.error('Error fetching total products sold:', error));
+                }
+            });
+        } else {
+            console.error('monthYearFilter element not found');
+        }
+    });
+</script>

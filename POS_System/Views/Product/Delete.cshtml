@@ -1,0 +1,98 @@
+﻿@model POS_System.Models.Product
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Edit Product</h4>
+        <div class="basic-form">
+            <form asp-action="Destroy" asp-controller="Product" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="ProductId" />
+                <input type="hidden" asp-for="Image" /> <!-- Keeps the current image if no new one is uploaded -->
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <input type="text" class="form-control" asp-for="ProductName" placeholder="Product Name" spellcheck="false">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <input type="text" class="form-control" asp-for="Price" placeholder="Price" spellcheck="false">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <select asp-for="CategoryId" asp-items="@ViewBag.category" id="inputState" class="form-control">
+                            <option selected="selected">Please select Type of Category</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <select asp-for="SupplierId" asp-items="@ViewBag.Supplier" id="inputState" class="form-control">
+                            <option selected="selected">Please select Type of Supplier</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <select asp-for="Currency" id="inputState" class="form-control">
+                            <option>Please Select Type of the Currency</option>
+                            <option value="KHR">KHR</option>
+                            <option value="USD">USD</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <input type="text" class="form-control" asp-for="StockQuantity" placeholder="Stock Quantity" spellcheck="false" data-ms-editor="true">
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Upload</span>
+                            </div>
+                            <div class="custom-file">
+                                <input asp-for="Image" type="file" class="custom-file-input" name="file">
+                                <label class="custom-file-label" for="Image">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <input type="text" class="form-control" asp-for="Description" placeholder="Description" spellcheck="false" data-ms-editor="true">
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- Display Current Image -->
+                <div class="form-group">
+                    @if (!string.IsNullOrEmpty(Model.Image))
+                    {
+                        <label>Product Image:</label>
+                        <div>
+                            <img src="~/images/@Model.Image" alt="Product Image" width="120" height="120" class="img-thumbnail" />
+                        </div>
+                    }
+                </div>
+
+
+                <div class="form-group mt-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success mr-2">Delete</button>
+                    <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelector('.custom-file-input').addEventListener('change', function (e) {
+        var fileName = e.target.files[0].name;
+        var nextSibling = e.target.nextElementSibling;
+        nextSibling.innerText = fileName;
+    });
+</script>

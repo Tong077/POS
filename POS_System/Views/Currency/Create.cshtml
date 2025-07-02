@@ -1,0 +1,193 @@
+﻿@model POS_System.Models.DTO.CurrencyDTO
+
+@{
+    ViewData["Title"] = "Add New Currency Exchange Rate";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Add New Currency Exchange Rate</h4>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+        }
+
+        <div class="basic-form">
+            <form asp-action="Store" asp-controller="Currency" method="post" id="currencyForm">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label asp-for="FromCurrency">FromCurrency <span class="required-star" style="color:red">*</span></label>
+                        <select asp-for="FromCurrency" class="form-control" id="fromCurrency">
+                            <option value="">Select a currency</option>
+                            <option value="USD">USD</option>
+                            <option value="KHR">KHR</option>
+                        </select>
+                        <span asp-validation-for="FromCurrency" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="ToCurrency">ToCurrency <span class="required-star" style="color:red">*</span></label>
+                        <select asp-for="ToCurrency" class="form-control" id="toCurrency">
+                            <option value="">Select a currency</option>
+                            <option value="USD">USD</option>
+                            <option value="KHR">KHR</option>
+                        </select>
+                        <span asp-validation-for="ToCurrency" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="ExchangeRate">ExchangeRate <span class="required-star" style="color:red">*</span></label>
+                        <input type="number" step="0.01" min="0.01" class="form-control" asp-for="ExchangeRate" id="exchangeRate" placeholder="e.g., 4100" />
+                        <span asp-validation-for="ExchangeRate" class="text-danger"></span>
+                        <small id="exchangeRateHelp" class="form-text text-muted"></small>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label>Inverse Exchange Rate</label>
+                        <input type="text" class="form-control" id="inverseExchangeRate" readonly />
+                        <small id="inverseExchangeRateHelp" class="form-text text-muted"></small>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="EffectiveDateString">Effective Date & Time <span class="required-star" style="color:red">*</span></label>
+                       
+                        <input type="datetime-local" class="form-control" asp-for="EffectiveDateString" id="effectiveDate" step="60" />
+                        <span asp-validation-for="EffectiveDateString" class="text-danger"></span>
+                        <small id="effectiveDateHelp" class="form-text text-muted">
+                            Select the exact date and time (local). Defaults to now if blank.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success mr-2">Save</button>
+                    <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Prevent same currency selection
+        $("#fromCurrency, #toCurrency").change(function () {
+            var fromCurrency = $("#fromCurrency").val();
+            var toCurrency = $("#toCurrency").val();
+
+            if (fromCurrency && toCurrency && fromCurrency === toCurrency) {
+                alert("From Currency and To Currency cannot be the same.");
+                $(this).val("");
+                fromCurrency = $("#fromCurrency").val();
+                toCurrency = $("#toCurrency").val();
+            }
+
+            updateExchangeRateHelp(fromCurrency, toCurrency);
+            updateInverseExchangeRate(fromCurrency, toCurrency);
+        });
+
+        // Update help text and inverse rate when ExchangeRate changes
+        $("#exchangeRate").on("input", function () {
+            var fromCurrency = $("#fromCurrency").val();
+            var toCurrency = $("#toCurrency").val();
+            updateExchangeRateHelp(fromCurrency, toCurrency);
+            updateInverseExchangeRate(fromCurrency, toCurrency);
+        });
+
+        // Set default EffectiveDate to current local time if blank
+        var effectiveDateInput = $("#effectiveDate");
+        if (!effectiveDateInput.val()) {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = String(now.getMonth() + 1).padStart(2, '0');
+            var day = String(now.getDate()).padStart(2, '0');
+            var hours = String(now.getHours()).padStart(2, '0');
+            var minutes = String(now.getMinutes()).padStart(2, '0');
+            effectiveDateInput.val(`${year}-${month}-${day}T${hours}:${minutes}`);
+        }
+
+        // Warn if EffectiveDate is in the future
+        $("#effectiveDate").on("change", function () {
+            var selectedDate = new Date($(this).val());
+            var now = new Date();
+            var helpText = $("#effectiveDateHelp");
+            if (selectedDate > now) {
+                helpText.text("Warning: This rate will take effect in the future and won’t apply until then.")
+                    .addClass("text-warning").removeClass("text-muted");
+            } else {
+                helpText.text("Select the exact date and time (local). Defaults to now if blank.")
+                    .addClass("text-muted").removeClass("text-warning");
+            }
+        });
+
+        // Log input for debugging
+        $("#currencyForm").on("submit", function () {
+            console.log("EffectiveDate input: " + $("#effectiveDate").val());
+        });
+
+        // Function to update the help text for ExchangeRate
+        function updateExchangeRateHelp(fromCurrency, toCurrency) {
+            var exchangeRate = parseFloat($("#exchangeRate").val());
+            if (fromCurrency && toCurrency) {
+                if (!isNaN(exchangeRate) && exchangeRate > 0) {
+                    if (fromCurrency === "KHR" && toCurrency === "USD") {
+                        $("#exchangeRateHelp").text(`1 USD = ${exchangeRate.toFixed(2)} KHR`);
+                    } else if (fromCurrency === "USD" && toCurrency === "KHR") {
+                        $("#exchangeRateHelp").text(`1 USD = ${exchangeRate.toFixed(2)} KHR`);
+                    } else {
+                        $("#exchangeRateHelp").text(`1 ${fromCurrency} = ${exchangeRate.toFixed(2)} ${toCurrency}`);
+                    }
+                } else {
+                    if (fromCurrency === "KHR" && toCurrency === "USD") {
+                        $("#exchangeRateHelp").text("Enter KHR per 1 USD (e.g., 4100)");
+                    } else if (fromCurrency === "USD" && toCurrency === "KHR") {
+                        $("#exchangeRateHelp").text("Enter KHR per 1 USD (e.g., 4100)");
+                    } else {
+                        $("#exchangeRateHelp").text(`Enter ${toCurrency} per 1 ${fromCurrency}`);
+                    }
+                }
+            } else {
+                $("#exchangeRateHelp").text("Select currencies first.");
+            }
+        }
+
+        // Function to update the inverse exchange rate
+        function updateInverseExchangeRate(fromCurrency, toCurrency) {
+            var exchangeRate = parseFloat($("#exchangeRate").val());
+            if (fromCurrency && toCurrency && !isNaN(exchangeRate) && exchangeRate > 0) {
+                var inverseRate = 1 / exchangeRate;
+                if (fromCurrency === "KHR" && toCurrency === "USD") {
+                    $("#inverseExchangeRate").val(exchangeRate.toFixed(2));
+                    $("#inverseExchangeRateHelp").text(`1 USD = ${exchangeRate.toFixed(2)} KHR (stored as ${exchangeRate.toFixed(2)})`);
+                } else if (fromCurrency === "USD" && toCurrency === "KHR") {
+                    $("#inverseExchangeRate").val(exchangeRate.toFixed(2));
+                    $("#inverseExchangeRateHelp").text(`1 USD = ${exchangeRate.toFixed(2)} KHR (stored as ${exchangeRate.toFixed(2)})`);
+                } else {
+                    $("#inverseExchangeRate").val(inverseRate.toFixed(6));
+                    $("#inverseExchangeRateHelp").text(`1 ${toCurrency} = ${inverseRate.toFixed(6)} ${fromCurrency}`);
+                }
+            } else {
+                $("#inverseExchangeRate").val("");
+                $("#inverseExchangeRateHelp").text("Enter a valid exchange rate.");
+            }
+        }
+    });
+</script>

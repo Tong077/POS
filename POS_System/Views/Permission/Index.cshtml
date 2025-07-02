@@ -1,0 +1,43 @@
+﻿@model IEnumerable<POS_System.Models.Permission>
+@{
+    ViewData["Title"] = "Permission";
+}
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Permission Information</h4>
+        <p>
+            <a asp-action="Create" class="btn btn-sm btn-success">
+                <i class="fa-solid fa-plus"></i> 
+            </a>
+        </p>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Permission Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.PermissionId</td>
+                            <td>@item.Name</td>
+                         
+                            <td>
+                                <a class="btn btn-sm btn-primary" asp-controller="Permission" asp-action="Edit" asp-route-id="@item.PermissionId">
+                                    <i class="fa-solid fa-pen-nib"></i>
+                                </a>
+                                <a class="btn btn-sm btn-danger" asp-controller="Permission" asp-action="Delete" asp-route-id="@item.PermissionId">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

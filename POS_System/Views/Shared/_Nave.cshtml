@@ -1,0 +1,202 @@
+﻿@using POS_System.Models
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor Accessor
+@inject Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager
+@{
+    var name = Accessor.HttpContext.Session.GetString("UserName") ?? "User";
+    var image = Accessor.HttpContext.Session.GetString("Image") ?? "wwwroot/images/users";
+}
+
+<div class="nav-header">
+    <div class="brand-logo">
+        <a href="index.html">
+            <b class="logo-abbr"><img src="images/logo.png" alt=""> </b>
+            <span class="logo-compact"><img src="./images/logo-compact.png" alt=""></span>
+            <span class="brand-title">
+                <img src="images/logo-text.png" alt="">
+            </span>
+        </a>
+    </div>
+</div>
+
+<div class="header">
+    <div class="header-content clearfix">
+
+        <div class="nav-control">
+            <div class="hamburger">
+                <span class="toggle-icon"><i class="icon-menu"></i></span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <ul class="clearfix">
+                <li class="icons dropdown">
+                    <a href="javascript:void(0)" data-toggle="dropdown" aria-expanded="false" aria-label="Low Stock Notifications">
+                        <i class="mdi mdi-bell-outline"></i>
+                        <span class="badge badge-pill gradient-2" id="notificationCount"></span>
+                    </a>
+                    <div class="drop-down animated fadeIn dropdown-menu dropdown-notfication" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(5px, 65px, 0px);">
+                        <div class="dropdown-content-heading d-flex justify-content-between">
+                            <span class="">New Notifications</span>
+                            <a href="javascript:void()" class="d-inline-block">
+                                <span class="badge badge-pill gradient-2"></span>
+                            </a>
+                        </div>
+                        <div class="dropdown-content-body">
+                            <ul id="notificationList">
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+
+
+
+
+
+                <li class="icons dropdown">
+                    <div class="user-img c-pointer position-relative" data-toggle="dropdown">
+                        <span class="activity active"></span>
+                        <img src="@image" height="40" width="40" alt="">
+                    </div>
+                    <div class="drop-down dropdown-profile animated fadeIn dropdown-menu">
+                        <div class="dropdown-content-body">
+                            <ul>
+                                <li>
+                                    <a asp-controller="Account" asp-action="Profile" asp-route-id="@_userManager.GetUserId(User)">
+                                        <i class="icon-user"></i> <span>Profile</span>
+                                    </a>
+                                </li>
+                                <hr class="my-2">
+                                <li>
+                                    <form asp-action="Logout" asp-controller="Account" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-link" style="padding: 0; margin: 0; color: inherit;">
+                                            <i class="icon-key"></i> <span>Logout</span>
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+        toastr.options = {
+        "closeButton": true,
+        "positionClass": "toast-top-right",
+        "timeOut": "1000"
+    };
+
+    @if (TempData["toastr-type"] != null && TempData["toastr-message"] != null)
+    {
+                                <text>
+                                    console.log("Toastr triggered: @TempData["toastr-type"] - @TempData["toastr-message"]");
+                                    toastr["@TempData["toastr-type"]"]("@TempData["toastr-message"]");
+                                </text>
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll("input.form-control");
+        console.log("Inputs found:", inputs.length);
+        inputs.forEach(input => {
+            console.log("Processing input:", input);
+            input.addEventListener("input", function () {
+                const container = this.closest(".form-group");
+                const labelStar = container?.querySelector(".required-star");
+                console.log("Container:", container, "LabelStar:", labelStar);
+                if (labelStar) {
+                    labelStar.style.display = this.value.trim() ? "none" : "inline";
+                }
+            });
+            input.dispatchEvent(new Event("input"));
+        });
+    });
+</script>
+<script>
+$(document).ready(function () {
+   
+    console.log("jQuery loaded:", typeof $);
+    console.log("notificationList exists:", $('#notificationList').length);
+    console.log("notificationCount exists:", $('#notificationCount').length);
+
+   
+    loadLowStockNotifications();
+
+    
+
+    function loadLowStockNotifications() {
+        $.ajax({
+            url: '@Url.Action("GetLowStockNotifications", "Inventory")',
+            type: 'GET',
+            cache: false, 
+            success: function (data) {
+                console.log("Data received:", JSON.stringify(data, null, 2));
+                const notificationList = $('#notificationList');
+                const notificationCount = $('#notificationCount');
+                notificationList.empty();
+
+                if (data && Array.isArray(data) && data.length > 0) {
+                    notificationCount.text(data.length);
+                    data.forEach(item => {
+                        
+                        const productName = item.ProductName || item.productName || item.Name || 'Unknown Product';
+                        const stockQuantity = item.StockQuantity || item.stockQuantity || item.Quantity || 'N/A';
+                        const imageUrl = item.imageUrl || '~/wwwroot/images';
+
+                        console.log("Processing item:", { productName, stockQuantity, imageUrl }); // Log each item
+
+                        notificationList.append(`
+                            <li>
+                                <a href="javascript:void(0)">
+                                    <span class="mr-3 avatar-icon bg-danger-lighten-2 text-center">
+                                        <img src="${imageUrl}" alt="${productName}" class="img-fluid img-thumbnail" style="max-width: 50px; max-height: 70px;">
+                                    </span>
+                                    <div class="notification-content">
+                                        <h6 class="notification-heading">${productName} Low Stock</h6>
+                                        <span class="notification-text">Stock: ${stockQuantity}</span>
+                                    </div>
+                                </a>
+                            </li>
+                        `);
+                    });
+                } else {
+                    notificationCount.text('');
+                    notificationList.append(`
+                        <li>
+                            <a href="javascript:void(0)">
+                                <div class="notification-content">
+                                    <h6 class="notification-heading">No Low Stock Items</h6>
+                                    <span class="notification-text">All items are sufficiently stocked.</span>
+                                </div>
+                            </a>
+                        </li>
+                    `);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching notifications:", {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText
+                });
+                const notificationList = $('#notificationList');
+                notificationList.empty().append(`
+                    <li>
+                        <a href="javascript:void(0)">
+                            <div class="notification-content">
+                                <h6 class="notification-heading">Error Loading Notifications</h6>
+                                <span class="notification-text">Failed to fetch data: ${error}. Please try again later.</span>
+                            </div>
+                        </a>
+                    </li>
+                `);
+                $('#notificationCount').text('');
+            }
+        });
+    }
+});
+</script>
+

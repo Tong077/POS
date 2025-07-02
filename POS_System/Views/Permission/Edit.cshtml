@@ -1,0 +1,25 @@
+﻿@model POS_System.Models.Permission
+@{
+    ViewData["Title"] = "Add Permission";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Add Permission</h4>
+
+        <form asp-controller="Permission" asp-action="Update" method="post">
+            <input type="hidden" asp-for="PermissionId" />
+            <div class="form-group">
+                <label asp-for="Name">User Name <span class="text-danger">*</span></label>
+                <input type="text" asp-for="Name" class="form-control" />
+            </div>
+
+
+
+            <div class="form-group mt-3 d-flex justify-content-end">
+                <button type="submit" class="btn btn-sm btn-success mr-2">Save Change</button>
+                <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

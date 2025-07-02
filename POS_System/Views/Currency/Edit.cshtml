@@ -1,0 +1,85 @@
+﻿@model POS_System.Models.Currency
+
+@{
+    ViewData["Title"] = "Update Currency Exchange Rate";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Update Currency Exchange Rate</h4>
+        <div class="basic-form">
+            <form asp-action="Update" asp-controller="Currency" method="post">
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <input asp-for="CurrencyId" type="hidden" />
+
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label asp-for="FromCurrency">From Currency</label>
+                        <select asp-for="FromCurrency" class="form-control">
+                            <option value="">Select a currency</option>
+                            <option value="USD">USD</option>
+                            <option value="KHR">KHR</option>
+                        </select>
+                        <span asp-validation-for="FromCurrency" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="ToCurrency">To Currency</label>
+                        <select asp-for="ToCurrency" class="form-control">
+                            <option value="">Select a currency</option>
+                            <option value="USD">USD</option>
+                            <option value="KHR">KHR</option>
+                        </select>
+                        <span asp-validation-for="ToCurrency" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="ExchangeRate">Exchange Rate</label>
+                        <input type="number" step="0.01" min="0.01" class="form-control" asp-for="ExchangeRate" placeholder="e.g., 4100" />
+                        <span asp-validation-for="ExchangeRate" class="text-danger"></span>
+                        <small class="form-text text-muted">
+                            e.g., if From Currency is KHR and To Currency is USD, enter 4100 for 4100 KHR = 1 USD
+                        </small>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label asp-for="EffectiveDate">Effective Date</label>
+                        <input type="date" class="form-control" asp-for="EffectiveDate" min="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="EffectiveDate" class="text-danger"></span>
+                        <small class="form-text text-muted">When this rate takes effect (must be today or future)</small>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success mr-2">Save Change</button>
+                    <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                const fromCurrency = $('#FromCurrency').val();
+                const toCurrency = $('#ToCurrency').val();
+                if (fromCurrency && toCurrency && fromCurrency === toCurrency) {
+                    e.preventDefault();
+                    const errorDiv = $('.text-danger.mb-3');
+                    errorDiv.text('From Currency and To Currency must be different.');
+                    errorDiv.show();
+                }
+            });
+
+            $('#FromCurrency, #ToCurrency').on('change', function () {
+                const errorDiv = $('.text-danger.mb-3');
+                errorDiv.text('');
+                errorDiv.hide();
+            });
+        });
+    </script>
+}

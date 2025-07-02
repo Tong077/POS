@@ -1,0 +1,169 @@
+﻿@model List<POS_System.Models.Inventory>
+
+@{
+    ViewData["Title"] = "Add New Inventory";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Add New Inventory</h4>
+        <div class="basic-form">
+            <form asp-action="Store" asp-controller="Inventory" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div id="inventory-items">
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <div class="form-row inventory-row mb-3">
+                            <div class="form-group col-md-3">
+                                <label asp-for="@Model[i].ProductId">Product</label>
+                                <select asp-for="@Model[i].ProductId" asp-items="@ViewBag.Products" class="form-control" onchange="populateStockQuantity(this, @i)">
+                                    <option value="">Please select a product</option>
+                                </select>
+                                <span asp-validation-for="@Model[i].ProductId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label asp-for="@Model[i].StockQuantity">Stock Quantity</label>
+                                <input type="number" step="0.01" min="0.01" class="form-control" asp-for="@Model[i].StockQuantity" placeholder="Stock Quantity" oninput="updateCostPriceDisplay(this, @i)" />
+                                <span asp-validation-for="@Model[i].StockQuantity" class="text-danger"></span>
+                                <small id="currentStock_@i" class="form-text text-muted"></small>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label asp-for="@Model[i].Currency">Currency</label>
+                                <select asp-for="@Model[i].Currency" class="form-control" onchange="updateCostPriceDisplay(this, @i)">
+                                    <option value="">Please Select Type of the Currency</option>
+                                    <option value="KHR">KHR</option>
+                                    <option value="USD">USD</option>
+                                </select>
+                                <span asp-validation-for="@Model[i].Currency" class="text-danger"></span>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label asp-for="@Model[i].CostPrice">Cost Price</label>
+                                <input type="number" step="0.01" min="0.01" class="form-control" asp-for="@Model[i].CostPrice" placeholder="Cost Price" oninput="updateCostPriceDisplay(this, @i)" />
+                                <span asp-validation-for="@Model[i].CostPrice" class="text-danger"></span>
+                                <small id="currentCostPrice_@i" class="form-text text-muted"></small>
+                                <small id="convertedCostPrice_@i" class="form-text text-muted"></small>
+                            </div>
+                            <div class="form-group col-md-1 d-flex align-items-end">
+                                <button type="button" class="btn btn-sm btn-danger remove-row">Remove</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="form-group mt-3">
+                    <button type="button" id="add-row" class="btn btn-sm btn-primary">Add Another Item</button>
+                </div>
+
+                <div class="form-group mt-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-success mr-2">Save</button>
+                    <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        let inventoryData = {};
+
+        function populateStockQuantity(element, index) {
+            const productId = element.value;
+            const row = element.closest('.inventory-row');
+            const currentStockElement = document.getElementById(`currentStock_${index}`);
+            const currentCostPriceElement = document.getElementById(`currentCostPrice_${index}`);
+            const currencySelect = row.querySelector(`select[name='[${index}].Currency']`);
+            const costPriceInput = row.querySelector(`input[name='[${index}].CostPrice']`);
+
+            if (productId) {
+                fetch(`/Inventory/GetInventoryDetails?productId=${productId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        inventoryData[index] = data;
+                        if (data.exists) {
+                            currentStockElement.textContent = `Current Stock: ${data.stockQuantity}`;
+                            currentCostPriceElement.textContent = `Current Cost Price: ${data.costPrice} ${data.currency}, Total Cost: ${data.totalCost} ${data.currency}`;
+                            if (data.currency) {
+                                currencySelect.value = data.currency;
+                            }
+                            costPriceInput.value = data.costPrice;
+                        } else {
+                            currentStockElement.textContent = 'No existing inventory.';
+                            currentCostPriceElement.textContent = '';
+                            costPriceInput.value = '';
+                        }
+                        updateCostPriceDisplay(element, index);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching inventory details:', error);
+                        currentStockElement.textContent = 'Error fetching stock.';
+                        currentCostPriceElement.textContent = '';
+                    });
+            } else {
+                currentStockElement.textContent = '';
+                currentCostPriceElement.textContent = '';
+                inventoryData[index] = null;
+                currencySelect.value = '';
+                costPriceInput.value = '';
+                updateCostPriceDisplay(element, index);
+            }
+        }
+
+        function updateCostPriceDisplay(element, index) {
+            const row = element.closest('.inventory-row');
+            const currency = row.querySelector(`select[name='[${index}].Currency']`).value;
+            const costPriceInput = row.querySelector(`input[name='[${index}].CostPrice']`);
+            const stockQuantityInput = row.querySelector(`input[name='[${index}].StockQuantity']`);
+            const costPrice = parseFloat(costPriceInput.value) || 0;
+            const quantity = parseFloat(stockQuantityInput.value) || 0;
+            const convertedCostPriceElement = document.getElementById(`convertedCostPrice_${index}`);
+
+            if (!currency || costPrice === 0 || quantity === 0) {
+                convertedCostPriceElement.textContent = '';
+                return;
+            }
+
+            const totalNewCost = costPrice * quantity;
+            convertedCostPriceElement.textContent = `Total New Cost: ${totalNewCost.toFixed(2)} ${currency}`;
+        }
+
+        document.getElementById('add-row').addEventListener('click', function () {
+            const container = document.getElementById('inventory-items');
+            const index = container.children.length;
+            const template = container.children[0].cloneNode(true);
+
+            template.querySelectorAll('input, select').forEach(input => {
+                input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                input.id = input.id.replace(/_\d+$/, `_${index}`);
+                if (input.tagName === 'INPUT') input.value = '';
+                if (input.tagName === 'SELECT') input.selectedIndex = 0;
+            });
+            template.querySelectorAll('small').forEach(small => {
+                small.id = small.id.replace(/_\d+$/, `_${index}`);
+                small.textContent = '';
+            });
+            template.querySelector('.remove-row').style.display = 'block';
+
+            container.appendChild(template);
+            updateCostPriceDisplay(template.querySelector('select'), index);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-row')) {
+                const rows = document.querySelectorAll('.inventory-row');
+                if (rows.length > 1) {
+                    e.target.closest('.inventory-row').remove();
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstRow = document.querySelector('.inventory-row');
+            if (firstRow) {
+                populateStockQuantity(firstRow.querySelector('select'), 0);
+                firstRow.querySelector('.remove-row').style.display = 'none';
+            }
+        });
+    </script>
+</div>

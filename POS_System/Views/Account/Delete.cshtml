@@ -1,0 +1,48 @@
+﻿@model POS_System.Models.DTO.UserViewModel
+
+@{
+    ViewData["Title"] = "Delete User";
+    Layout = "_Login";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="card-titel">
+            <h4>Delete User</h4>
+            <div class="basic-form">
+                <form asp-action="Delete" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label class="control-label">Username</label>
+                        <input class="form-control" value="@Model.Username" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Email</label>
+                        <input class="form-control" value="@Model.Email" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Roles</label>
+                        <input class="form-control" value="@string.Join(", ", Model.Roles)" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Profile Image</label>
+                        @if (!string.IsNullOrEmpty(Model.ImagePath))
+                        {
+                            <div>
+                                <img src="@Model.ImagePath" class="img-fluid img-thumbnail" style="max-width: 100px; max-height: 100px;" alt="Current Image" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div>No Image</div>
+                        }
+                    </div>
+                    <div class="form-group float-right">
+                        <button type="submit" class="btn btn-sm btn-success">Delete</button>
+                        <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

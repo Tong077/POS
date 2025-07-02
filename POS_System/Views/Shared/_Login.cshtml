@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    <!-- Stylesheets -->
+    <link href="~/quixlab-bootstrap-main/theme/icons/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/quixlab-bootstrap-main/theme/css/style.css" rel="stylesheet" />
+    <link href="~/quixlab-bootstrap-main/theme/plugins/toastr/css/toastr.min.css" rel="stylesheet" />
+    <script src="~/quixlab-bootstrap-main/theme/plugins/jquery/jquery.min.js"></script>
+</head>
+
+
+<body class="h-100">
+    @RenderBody()
+
+    <!-- Scripts -->
+    <script src="~/quixlab-bootstrap-main/theme/plugins/common/common.min.js"></script>
+    <script src="~/quixlab-bootstrap-main/theme/js/custom.min.js"></script>
+    <script src="~/quixlab-bootstrap-main/theme/js/settings.js"></script>
+    <script src="~/quixlab-bootstrap-main/theme/js/gleek.js"></script>
+    <script src="~/quixlab-bootstrap-main/theme/js/styleSwitcher.js"></script>
+    <script src="~/quixlab-bootstrap-main/theme/plugins/toastr/js/toastr.min.js"></script>
+    <script src="~/quixlab-bootstrap-main/theme/plugins/toastr/js/toastr.init.js"></script>
+    <script src="~/quixlab-bootstrap-main/theme/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "1000"
+        };
+
+        @if (TempData["toastr-type"] != null && TempData["toastr-message"] != null)
+        {
+                    <text>
+                        toastr["@TempData["toastr-type"]"]("@TempData["toastr-message"]");
+                    </text>
+        }
+         document.addEventListener("DOMContentLoaded", function () {
+             const inputs = document.querySelectorAll("input.form-control");
+
+             inputs.forEach(input => {
+                 input.addEventListener("input", function () {
+                     const container = this.closest(".form-group");
+                     const labelStar = container?.querySelector(".required-star");
+
+                     if (labelStar) {
+                         labelStar.style.display = this.value.trim() ? "none" : "inline";
+                     }
+                 });
+
+                 // Trigger once to initialize based on default value
+                 input.dispatchEvent(new Event("input"));
+             });
+         });
+    </script>
+
+
+</body>
+</html>

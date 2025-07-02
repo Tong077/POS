@@ -1,0 +1,51 @@
+﻿@model POS_System.Models.DTO.EditUserDTO
+@{
+    ViewData["Title"] = "User";
+ 
+}
+<div class="card">
+
+    <div class="card-body">
+
+        <h4 class="card-titel">Update User</h4>
+        <form asp-controller="Account" asp-action="Update" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="DisplayUsername">Username</label>
+                <input asp-for="DisplayUsername" class="form-control" />
+                <span asp-validation-for="DisplayUsername" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SelectedRole">Role</label>
+                <select asp-for="SelectedRole" asp-items="ViewBag.Roles" class="form-control"></select>
+                <span asp-validation-for="SelectedRole" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Profile Image</label>
+                @if (!string.IsNullOrEmpty(Model.CurrentImagePath))
+                {
+                    <div>
+                        <img src="@Model.CurrentImagePath" alt="Profile Image" style="max-width: 100px;" />
+                    </div>
+                }
+                <input type="file" asp-for="Image" class="form-control-file mt-1" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+           <div class="float-right">
+                <button type="submit" class="btn btn-sm btn-success">Save Changes</button>
+                <a asp-action="Index" class="btn  btn-sm btn-danger">Cancel</a>
+           </div>
+        </form>
+    </div>
+</div>
+

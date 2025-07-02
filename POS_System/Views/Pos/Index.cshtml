@@ -1,0 +1,79 @@
+﻿@model X.PagedList.IPagedList<POS_System.Models.SaleDetail>
+@using X.PagedList.Mvc.Core
+@using X.PagedList
+
+@{
+    ViewData["Title"] = "Sale";
+}
+
+<div style="min-height: 90vh;">
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title">
+                <h4>POINT OF SALE</h4>
+            </div>
+            <p>
+                <a asp-action="Create" class="btn btn-sm btn-success">POINT OF SALE</a>
+            </p>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>User Name</th>
+                            <th>Customer Name</th>
+                            <th>Product Name</th>
+                            <th>Product Image</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total Amount</th>
+                            <th>Currency</th>
+                            <th>Sale Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.SaleDetailID</td>
+                                <td>@item.Sale?.ApplicationUser?.DisplayUsername</td>
+                                <td>@item.Sale?.Customer?.CustomerName</td>
+                                <td>@item.Product?.ProductName</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.Product?.Image))
+                                    {
+                                        <img src="@Url.Content("~/images/" + item.Product.Image)"
+                                             class="img-fluid img-thumbnail"
+                                             style="max-width: 50px; max-height: 70px;"
+                                             alt="@item.Product?.ProductName" />
+                                    }
+                                </td>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price</td>
+                                <td>@item.TotalAmount</td>
+                                <td>@item.Sale?.Currency</td>
+                                <td>@item.Sale?.SaleDate.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="d-flex justify-content-right">
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+            new PagedListRenderOptions
+            {
+                DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                MaximumPageNumbersToDisplay = 5,
+                LiElementClasses = new[] { "page-item" },
+                PageClasses = new[] { "page-link" }
+            })
+        </div>
+
+    </div>
+</div>

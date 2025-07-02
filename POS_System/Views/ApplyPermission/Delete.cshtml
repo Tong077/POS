@@ -1,0 +1,40 @@
+﻿@using POS_System.Service
+@inject IApplyPermissionRepository PermissionRepository
+@model POS_System.Models.RolePermission
+@{
+    ViewData["Title"] = "Permission";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Delete Permission</h4>
+        <form asp-controller="ApplyPermission" asp-action="Delete" method="post">
+            <input type="hidden" asp-for="RolePermissionId" />
+
+            <div class="form-group">
+                <label asp-for="UserID">Username <span class="required-star" style="color:red">*</span></label>
+                <select asp-for="UserID" asp-items="ViewBag.Users" class="form-control"></select>
+                <span asp-validation-for="UserID" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PermissionId">Permission <span class="required-star" style="color:red">*</span></label>
+                <select asp-for="PermissionId" asp-items="ViewBag.Permissions" class="form-control"></select>
+                <span asp-validation-for="PermissionId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3 float-lg-right">
+                <button type="submit" class="btn btn-sm btn-success">
+                    Delete
+                </button>
+                <a asp-action="Index" class="btn btn-sm btn-danger">Cancel</a>
+
+            </div>
+        </form>
+    </div>
+
+
+</div>
+
+
+
